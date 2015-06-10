@@ -29,16 +29,28 @@ class RubyMotionCompletionGenerator
       file = File.read(file)
       doc = Nokogiri::XML(file)
 
-      parse_functions(doc.css('function'))
+      @completions['functions'] = parse_functions(doc.css('function'))
 
-      parse_methods(doc.css('method'))
+      # parse_methods(doc.css('method'))
 
-      parse_constants(doc.css('constant'))
+      # parse_constants(doc.css('constant'))
 
     end
   end
 
   def parse_functions(functions)
+    functions.inject({}) do |functions, function|
+      args = {}
+
+      function.css('arg').inject(args) do |args, arg|
+        args[arg['name'].to_sym] = arg['declared_type']
+        args
+      end
+
+      function_name = function['name']
+      functions[function_name.to_sym] = args
+      functions
+    end
   end
 
   def parse_methods(methods)
