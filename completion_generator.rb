@@ -39,17 +39,15 @@ class RubyMotionCompletionGenerator
   end
 
   def parse_functions(functions)
-    functions.inject({}) do |functions, function|
+    functions.each_with_object({}) do |function, functions|
       args = {}
 
-      function.css('arg').inject(args) do |args, arg|
+      function.css('arg').each_with_object(args) do |arg, args|
         args[arg['name'].to_sym] = arg['declared_type']
-        args
       end
 
       function_name = function['name']
       functions[function_name.to_sym] = args
-      functions
     end
   end
 
