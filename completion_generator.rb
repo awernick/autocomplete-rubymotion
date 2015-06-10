@@ -43,7 +43,8 @@ class RubyMotionCompletionGenerator
       args = {}
 
       function.css('arg').each_with_object(args) do |arg, args|
-        args[arg['name'].to_sym] = arg['declared_type']
+        arg_name = (arg['name'] || arg['declared_type'].underscore[1] || arg['declared_type']).to_sym
+        args[arg_name] = arg['declared_type']
       end
 
       function_name = function['name']
