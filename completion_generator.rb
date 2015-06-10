@@ -50,7 +50,7 @@ class RubyMotionCompletionGenerator
         arg_name = (arg['name'] || arg['declared_type'].underscore.split('_')[1] || arg['declared_type']) # NSArray => array or BOOL
 
         if args.has_key?(arg_name)
-          arg_name += '1'  # ex. array1 if array key exists
+          arg_name += '1'  # ex. 'array1' if 'array' key exists
           arg_name = arg_name.next while args.has_key?(arg_name) # keep incrementing while the key exists
         end
 
