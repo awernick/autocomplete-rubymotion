@@ -35,6 +35,7 @@ class RubyMotionCompletionGenerator
 
       # parse_constants(doc.css('constant'))
 
+      # parse_classes(doc.css('class'))
     end
   end
 
@@ -76,6 +77,10 @@ class RubyMotionCompletionGenerator
       const_name = constant['name']
       constants[const_name] = constant['declared_type']
     end
+  end
+
+  def parse_classes(classes)
+    classes.map {|klass| klass['name']}
   end
 end
 
