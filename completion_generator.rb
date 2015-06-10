@@ -45,6 +45,10 @@ class RubyMotionCompletionGenerator
   end
 
   def parse_constants(constants)
+    constants.each_with_object({}) do |constant, constants|
+      const_name = constant['name']
+      constants[const_name] = constant['declared_type']
+    end
   end
 end
 
