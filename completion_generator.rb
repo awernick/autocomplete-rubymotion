@@ -42,20 +42,22 @@ class RubyMotionCompletionGenerator
   end
 
   def parse_methods(methods)
-    methods.inject({}) do |methods, method|
+    methods.each_with_object({}) do |method, methods|
       selector = method['selector'].to_sym
       methods[selector] = {}
 
-      methods[selector][:args] = method.css('arg').inject({}) do |args, arg|
+      methods[selector][:args] = method.css('arg').each_with_object({}) do |arg, args|
         arg_name = (arg['name'] || arg['declared_type'].underscore.split('_')[1] || arg['declared_type']) # NSArray => array or BOOL
-        arg_name += '1' if args.has_key?(arg_name) # array1 if array exists
-        arg_name = arg_name.next while args.has_key?(arg_name) # keep incrementing while the key exists
+
+        if args.has_key?(arg_name)
+          arg_name += '1'  # ex. array1 if array key exists
+          arg_name = arg_name.next while args.has_key?(arg_name) # keep incrementing while the key exists
+        end
+
         args[arg_name.to_sym] = arg['declared_type']
-        args
       end
 
       methods[selector][:retval] = method.css('retval').first['declared_type']
-      methods
     end
   end
 
