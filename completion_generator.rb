@@ -31,7 +31,7 @@ class RubyMotionCompletionGenerator
 
       # parse_functions(doc.css('function'))
 
-      parse_methods(doc.css('method'))
+      # parse_methods(doc.css('method'))
 
       # parse_constants(doc.css('constant'))
 
@@ -39,6 +39,16 @@ class RubyMotionCompletionGenerator
   end
 
   def parse_functions(functions)
+    functions.each_with_object({}) do |function, functions|
+      args = {}
+
+      function.css('arg').each_with_object(args) do |arg, args|
+        args[arg['name'].to_sym] = arg['declared_type']
+      end
+
+      function_name = function['name']
+      functions[function_name.to_sym] = args
+    end
   end
 
   def parse_methods(methods)
