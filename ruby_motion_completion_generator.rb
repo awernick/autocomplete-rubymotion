@@ -1,17 +1,6 @@
 require 'nokogiri'
 require 'json'
 
-# TODO:
-# 1. Verify RubyMotion is installed
-# 2. Get latest BridgeSupport folder
-# 3. Get all files inside folder
-# 4. Process each through nokogiri
-
-# Options:
-# 1. Allow selection of IOS, Android, or OSX or all
-
-RUBYMOTION_PATH =  ARGV.first || '/Library/RubyMotion/ios/data'
-
 class RubyMotionCompletionGenerator
   attr_accessor :dir
 
@@ -97,8 +86,4 @@ class String
     tr("-", "_").
     downcase
   end
-end
-
-class RubyMotionGrammarParser
-
 end
