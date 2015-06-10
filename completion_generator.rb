@@ -51,7 +51,7 @@ class RubyMotionCompletionGenerator
       end
 
       function_name = function['name']
-      functions[function_name.to_sym] = args
+      functions[function_name.to_sym][:args] = args
     end
   end
 
