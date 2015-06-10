@@ -21,22 +21,22 @@ class RubyMotionCompletionGenerator
   end
 
   def generate(dir)
-    Dir.chdir(dir)
-
-    Dir.entries(dir).each do |file|
-      return if File.directory?(file)
+    Dir.glob("#{dir}/*").each do |file|
+      next if File.directory?(file)
 
       file = File.read(file)
       doc = Nokogiri::XML(file)
 
-      # parse_functions(doc.css('function'))
+      @completions[:functions] = parse_functions(doc.css('function'))
 
-      # parse_methods(doc.css('method'))
+      @completions[:methods] = parse_methods(doc.css('method'))
 
-      # parse_constants(doc.css('constant'))
+      @completions[:constants] = parse_constants(doc.css('constant'))
 
-      # parse_classes(doc.css('class'))
+      @completions[:classes] = parse_classes(doc.css('class'))
     end
+
+    @completions.to_json
   end
 
   def parse_functions(functions)
