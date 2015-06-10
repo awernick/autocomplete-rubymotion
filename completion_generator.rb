@@ -18,6 +18,8 @@ class RubyMotionCompletionGenerator
   def initialize(dir)
     @dir = dir
     @completions = {}
+    @completions[:functions] = @completions[:methods] = @completions[:constants] = {}
+    @completions[:classes] = []
   end
 
   def generate(dir)
@@ -27,13 +29,13 @@ class RubyMotionCompletionGenerator
       file = File.read(file)
       doc = Nokogiri::XML(file)
 
-      @completions[:functions] = parse_functions(doc.css('function'))
+      @completions[:functions].merge!(parse_functions(doc.css('function')))
 
-      @completions[:methods] = parse_methods(doc.css('method'))
+      @completions[:methods].merge!(parse_methods(doc.css('method')))
 
-      @completions[:constants] = parse_constants(doc.css('constant'))
+      @completions[:constants].merge!(parse_constants(doc.css('constant')))
 
-      @completions[:classes] = parse_classes(doc.css('class'))
+      (@completions[:classes] << parse_classes(doc.css('class'))).flatten!
     end
 
     @completions.to_json
