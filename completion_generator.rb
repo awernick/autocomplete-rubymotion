@@ -29,11 +29,11 @@ class RubyMotionCompletionGenerator
       file = File.read(file)
       doc = Nokogiri::XML(file)
 
-      parse_functions(doc.css('function'))
+      # parse_functions(doc.css('function'))
 
       parse_methods(doc.css('method'))
 
-      parse_constants(doc.css('constant'))
+      # parse_constants(doc.css('constant'))
 
     end
   end
