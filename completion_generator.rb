@@ -42,12 +42,36 @@ class RubyMotionCompletionGenerator
   end
 
   def parse_methods(methods)
+    methods.inject({}) do |methods, method|
+      selector = method['selector'].to_sym
+      methods[selector] = {}
+
+      methods[selector][:args] = method.css('arg').inject({}) do |args, arg|
+        arg_name = (arg['name'] || arg['declared_type'].underscore.split('_')[1] || arg['declared_type']) # NSArray => array or BOOL
+        arg_name += '1' if args.has_key?(arg_name) # array1 if array exists
+        arg_name = arg_name.next while args.has_key?(arg_name) # keep incrementing while the key exists
+        args[arg_name.to_sym] = arg['declared_type']
+        args
+      end
+
+      methods[selector][:retval] = method.css('retval').first['declared_type']
+      methods
+    end
   end
 
   def parse_constants(constants)
   end
 end
 
+class String
+  def underscore
+    self.gsub(/::/, '/').
+    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+    gsub(/([a-z\d])([A-Z])/,'\1_\2').
+    tr("-", "_").
+    downcase
+  end
+end
 
 class RubyMotionGrammarParser
 
