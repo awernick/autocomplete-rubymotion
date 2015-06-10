@@ -50,6 +50,7 @@ class RubyMotionCompletionGenerator
       end
 
       functions[function_name.to_sym][:args] = args
+      functions[function_name.to_sym][:retval] = function.css('retval').first['declared_type']
     end
   end
 
