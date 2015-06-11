@@ -3,13 +3,9 @@ require 'json'
 
 class RubyMotionCompletionGenerator
   attr_accessor :dir
-  attr_reader :total
-  attr_reader :total_parsed
 
   def initialize(dir)
     @dir = dir
-    @total = 0
-    @total_parsed = 0
     @completions = {}
     @completions[:functions] = {}
     @completions[:methods] = {}
