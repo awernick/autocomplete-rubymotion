@@ -13,14 +13,13 @@ class RubyMotionCompletionGenerator
     @completions[:classes] = []
   end
 
+
   def generate
     Dir.glob("#{@dir}/*").each do |file|
       next if File.directory? file
 
       file = File.read(file)
       doc = Nokogiri::XML(file)
-
-      @total += doc.root.children.length
 
 
       functions = parse_functions(doc.css('function')) do |function_hash, function|
@@ -88,7 +87,7 @@ class RubyMotionCompletionGenerator
   end
 
   def parse_classes(classes)
-    classes.map {|klass| @total_parsed += 1; klass['name']}
+    classes.map {|klass| klass['name']}
   end
 
   def method_missing(method_sym, *args, &block)

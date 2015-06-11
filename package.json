@@ -6,12 +6,19 @@
   "keywords": [
   ],
   "activationCommands": {
-    "atom-workspace": "package:toggle"
+    "atom-workspace": "RubyMotion:toggle"
   },
   "repository": "https://github.com/atom/package",
   "license": "MIT",
   "engines": {
     "atom": ">=0.174.0 <2.0.0"
+  },
+  "providedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "2.0.0": "getProvider"
+      }
+    }
   },
   "dependencies": {
   }
