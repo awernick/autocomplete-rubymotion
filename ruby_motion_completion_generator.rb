@@ -26,11 +26,9 @@ class RubyMotionCompletionGenerator
 
       @total += doc.root.children.length
 
-      
+
       functions = parse_functions(doc.css('function')) do |function_hash, function|
-        @total_parsed += 1
         function_hash[:args] = parse_args(function.css('arg')) do |arg_hash, arg|
-          @total_parsed += 1
           arg_hash << arg['declared_type']
         end
 
@@ -38,9 +36,7 @@ class RubyMotionCompletionGenerator
       end
 
       methods = parse_methods(doc.css('method'), name_attribute: 'selector') do |method_hash, method|
-        @total_parsed += 1
         method_hash[:args] = parse_args(method.css('arg'))  do |arg_hash, arg|
-          @total_parsed += 1
           arg_hash << arg['declared_type']
         end
 
@@ -48,7 +44,6 @@ class RubyMotionCompletionGenerator
       end
 
       constants = parse_constants(doc.css('constant')) do |constant_hash, constant|
-        @total_parsed += 1
         constant_hash << constant['declared_type']
       end
 
@@ -95,7 +90,7 @@ class RubyMotionCompletionGenerator
     name_selector = ->(arg){ arg['name'] || arg['declared_type'].underscore.split('_')[1] || arg['declared_type'] }
     parse(args, name_attribute: name_selector, &block)
   end
- 
+
   def parse_classes(classes)
     classes.map {|klass| @total_parsed += 1; klass['name']}
   end
