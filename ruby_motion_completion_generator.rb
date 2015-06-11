@@ -43,14 +43,16 @@ class RubyMotionCompletionGenerator
         # p 'wasnt proc'
         node_name = node[node_attr]
       end
-      # p node.name
-      # p node_name
 
-      return if node_name.nil?
-      # p node.name
-      if %w[constant arg].include? node.name 
+      return if node_name.nil? || node_name.respond_to?(:to_sym) == false
+
+      if %w[constant arg].include? node.name
+        if nodes.has_key?(node_name)
+          node_name += '1'  # ex. 'array1' if 'array' key exists
+          node_name.next! while nodes.has_key?(node_name) # keep incrementing while the key exists
+        end
+
         nodes[node_name.to_sym] = ''
-        # p nodes[node_name.to_sym].inspect
       else
         nodes[node_name.to_sym] = {}
       end
@@ -68,20 +70,6 @@ class RubyMotionCompletionGenerator
 
       function_hash[:retval] = function.css('retval').first['declared_type']
     end
-
-    # functions.each_with_object({}) do |function, functions|
-    #   function_name = function['name']
-    #   functions[function_name.to_sym] = {}
-    #    args = {}
-    #
-    #   function.css('arg').each_with_object(args) do |arg, args|
-    #     arg_name = (arg['name'] || arg['declared_type'].underscore[1] || arg['declared_type']).to_sym
-    #     args[arg_name] = arg['declared_type']
-    #   end
-    #
-    #   functions[function_name.to_sym][:args] = args
-    #   functions[function_name.to_sym][:retval] = function.css('retval').first['declared_type']
-    # end
   end
 
   def parse_args(args, &block)
@@ -97,24 +85,6 @@ class RubyMotionCompletionGenerator
 
       method_hash[:retval] = method.css('retval').first['declared_type']
     end
-
-    # methods.each_with_object({}) do |method, methods|
-    #   selector = method['selector'].to_sym
-    #   methods[selector] = {}
-    #
-    #   methods[selector][:args] = method.css('arg').each_with_object({}) do |arg, args|
-    #     arg_name = (arg['name'] || arg['declared_type'].underscore.split('_')[1] || arg['declared_type']) # NSArray => array or BOOL
-    #
-    #     if args.has_key?(arg_name)
-    #       arg_name += '1'  # ex. 'array1' if 'array' key exists
-    #       arg_name = arg_name.next while args.has_key?(arg_name) # keep incrementing while the key exists
-    #     end
-    #
-    #     args[arg_name.to_sym] = arg['declared_type']
-    #   end
-    #
-    #   methods[selector][:retval] = method.css('retval').first['declared_type']
-    # end
   end
 
   def parse_constants(constants)
