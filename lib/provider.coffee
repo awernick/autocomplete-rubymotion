@@ -10,7 +10,7 @@ module.exports =
 
     if @isCompletingMethod(request)
       completions = (@getMethodCompletions(request))
-      
+
     completions
 
   loadProperties: ->
@@ -27,7 +27,7 @@ module.exports =
     return null unless prefix
 
     completions = []
-    for methodSelector of @methods when isPrefix(prefix, methodSelector)
+    for methodSelector of @methods when strStartsWith(methodSelector, prefix)
       completions.push(@buildMethodCompletion(methodSelector, prefix.substr(1)))
     completions
 
@@ -40,5 +40,5 @@ module.exports =
     completion
 
 
-isPrefix = (prefix, selector) ->
-  selector.substr(0, prefix.length).toLowerCase() is prefix.toLowerCase()
+strStartsWith = (selector, prefix) ->
+  selector.indexOf(prefix) == 0
