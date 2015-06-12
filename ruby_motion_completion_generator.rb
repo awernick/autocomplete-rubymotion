@@ -14,7 +14,7 @@ class RubyMotionCompletionGenerator
   end
 
 
-  def generate
+  def generate    
     Dir.glob("#{@dir}/*").each do |file|
       next if File.directory? file
 
