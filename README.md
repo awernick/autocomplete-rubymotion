@@ -4,11 +4,11 @@
 ### To-Do
 - [X] Method autocomplete
 - [X] Constant autocomplete
-- [] Class autocomplete
-- [] Integration with build system
+- [ ] Class autocomplete
+- [ ] Integration with build system
 - [X] Version-specific snippet generation from source
-- [] Proper RubyMotion project detection.
-- [] Suggested features?
+- [ ] Proper RubyMotion project detection.
+- [ ] Suggested features?
 
 ### Contributing
 I am noob Javascript developer, so if there is anything that could be improved or optimized, feel free to send a pull-request and I'll be glad to integrate it into the project.
