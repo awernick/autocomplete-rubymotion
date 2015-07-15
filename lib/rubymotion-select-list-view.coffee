@@ -11,7 +11,7 @@ class RubyMotionSelectListView extends SelectListView
     @list.addClass 'mark-active'
     @setItems @getSupportFiles()
     @initialized = true
-    atom.config.observe 'autocomplete-rubymotion.supportFileDir',
+    atom.config.observe 'autocomplete-motion.supportFileDir',
       ({newVal, oldVal}) => @buildMotionPath()
 
   viewForItem: (version) ->
@@ -47,7 +47,7 @@ class RubyMotionSelectListView extends SelectListView
     @getDirectories(@motion_path)
 
   buildMotionPath: ->
-    tmp = atom.config.get('autocomplete-rubymotion.supportFileDir')
+    tmp = atom.config.get('autocomplete-motion.supportFileDir')
     @motion_path = path.resolve(tmp, 'data/ios')
 
   getDirectories: (srcpath) ->

@@ -1,6 +1,6 @@
 {
-  "name": "autocomplete-rubymotion",
-  "main": "./lib/autocomplete-rubymotion",
+  "name": "autocomplete-motion",
+  "main": "./lib/autocomplete-motion",
   "version": "0.0.1",
   "description": "Autocomplete+ provider for RubyMotion",
   "keywords": [
