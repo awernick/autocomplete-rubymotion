@@ -37,13 +37,13 @@ module.exports =
 
   getCompletions: ({prefix}) ->
     completions = []
-    for constant, type of @constants when firstCharsEqual(prefix, constant)
+    for constant, type of @constants when stringContains(prefix, constant)
       completions.push(@buildConstantCompletion(prefix, constant))
     completions
 
   getMethodCompletions: ({scopeDescriptor, prefix}) ->
     completions = []
-    for method, {args} of @methods when firstCharsEqual(prefix, method)
+    for method, {args} of @methods when stringContains(prefix, method)
       completions.push(@buildMethodCompletion(prefix, method, args))
     completions
 

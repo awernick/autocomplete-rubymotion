@@ -15,7 +15,7 @@ class RubyMotionCompletionGenerator
     @completions[:enums] = {}
     @completions[:classes] = []
   end
-
+  
   def generate
     Dir.glob("#{@dir}/*").each do |file|
       next if File.directory? file
