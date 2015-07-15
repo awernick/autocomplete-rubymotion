@@ -10,9 +10,11 @@ module.exports =
 
     if isCompletingFunction = @isCompletingFunction({scopeDescriptor})
       completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
+
     if isCompletingConstant = @isCompletingConstant({scopeDescriptor})
       completions = completions.concat(@getConstantCompletions({prefix}))
-    return completions
+
+    completions
     # @getConstructCompletions(request)
 
   # getConstructCompletions: (request) ->
@@ -47,7 +49,7 @@ module.exports =
 
   getConstantCompletions: ({prefix}) ->
     completions = []
-    for constant, type of @constants when firstCharsEqual(prefix, constant)
+    for constant, type of @constants when stringContains(prefix, constant)
       completions.push(@buildConstantCompletion(prefix, constant))
     completions
 
@@ -73,12 +75,7 @@ module.exports =
     displayText: constant
     replacementPrefix: prefix
 
-    # if argument?
-    #   completion.snippet = "#{pseudoSelector}(${1:#{argument}})"
-    # else
-    #   completion.text = pseudoSelector
-    # completion
-
+# Helpers
 hasScope = (scopesArray, scope) ->
   if scopesArray.indexOf(scope) isnt -1
     true
@@ -87,7 +84,7 @@ hasScope = (scopesArray, scope) ->
       value.indexOf(scope) isnt -1
     return selected.length > 0
 
-firstCharsEqual = (prefix, text) ->
+stringContains = (prefix, text) ->
   text.replace(/\W/g, '').toLowerCase().indexOf(prefix.toLowerCase()) == 0
 
   # scopesArray.indexOf(scope) isnt -1
