@@ -1,3 +1,5 @@
+#! /usr/bin/env ruby
+
 require 'nokogiri'
 require 'json'
 
@@ -10,9 +12,9 @@ class RubyMotionCompletionGenerator
     @completions[:functions] = {}
     @completions[:methods] = {}
     @completions[:constants] = {}
+    @completions[:enums] = {}
     @completions[:classes] = []
   end
-
 
   def generate
     Dir.glob("#{@dir}/*").each do |file|
@@ -20,7 +22,6 @@ class RubyMotionCompletionGenerator
 
       file = File.read(file)
       doc = Nokogiri::XML(file)
-
 
       functions = parse_functions(doc.css('function')) do |function_hash, function|
         function_hash[:args] = parse_args(function.css('arg')) do |arg_hash, arg|
@@ -42,16 +43,24 @@ class RubyMotionCompletionGenerator
         constant_hash << constant['declared_type']
       end
 
+      enums = parse_enums(doc.css('enum')) do |enum_hash, enum|
+        enum_hash << enum['value']
+      end
+
       @completions[:functions].merge!(functions)
 
       @completions[:methods].merge!(methods)
 
       @completions[:constants].merge!(constants)
 
+      @completions[:constants].merge!(enums)
+
       (@completions[:classes] << parse_classes(doc.css('class'))).flatten!
     end
 
-    JSON.pretty_generate(@completions)
+    Dir.chdir(File.dirname(__FILE__))
+    File.open('completions.json', 'w') { |file| file.write(JSON.pretty_generate(@completions)) }
+
   end
 
   def parse(nodes, options={})
@@ -66,7 +75,7 @@ class RubyMotionCompletionGenerator
 
       return if node_name.nil? || node_name.respond_to?(:to_sym) == false
 
-      if %w[constant arg].include? node.name
+      if %w[constant enum arg].include? node.name
         if nodes.has_key? node_name
           node_name += '1'  # ex. 'array1' if 'array' key exists
           node_name.next! while nodes.has_key? node_name # keep incrementing while the key exists
@@ -77,7 +86,7 @@ class RubyMotionCompletionGenerator
         nodes[node_name.to_sym] = {}
       end
 
-      yield nodes[node_name.to_sym], node
+      yield nodes[node_name.to_sym], node if block_given?
     end
   end
 
@@ -116,3 +125,6 @@ class String
     downcase
   end
 end
+
+dir = ARGV.shift
+RubyMotionCompletionGenerator.new(dir).generate
