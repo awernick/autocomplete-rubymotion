@@ -8,13 +8,23 @@ module.exports =
   getSuggestions: ({editor, bufferPosition, scopeDescriptor, prefix}) ->
     completions = []
 
-    if isCompletingFunction = @isCompletingFunction({scopeDescriptor})
-      completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
+    if isCompletingInheritedClass = @isCompletingInheritedClass({scopeDescriptor})
+      completions = completions.concat(@getClassCompletions({prefix}))
 
-    if isCompletingConstant = @isCompletingConstant({scopeDescriptor})
+    else if isCompletingConstantOrClass = @isCompletingConstantOrClass({scopeDescriptor})
+      completions = completions.concat(@getClassCompletions({prefix}))
       completions = completions.concat(@getConstantCompletions({prefix}))
 
-    completions
+    else if isCompletingMethod = @isCompletingMethod({scopeDescriptor})
+        completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
+
+    else
+      # Add methods, functions, and classes
+      completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
+      completions = completions.concat(@getFunctionCompletions({scopeDescriptor, prefix}))
+      # completions = completions.concat(@getClassCompletions({scopeDescriptor, prefix}))
+
+    completions.sort()
     # @getConstructCompletions(request)
 
   # getConstructCompletions: (request) ->
@@ -27,13 +37,17 @@ module.exports =
       {@functions, @methods, @constants, @classes} = JSON.parse(content) unless error?
       return
 
-  isCompletingFunction: ({scopeDescriptor}) ->
+  isCompletingMethod: ({scopeDescriptor}) ->
     scopes = scopeDescriptor.getScopesArray()
     return hasScope(scopes, 'meta.function.method')
 
-  isCompletingConstant: ({scopeDescriptor}) ->
+  isCompletingConstantOrClass: ({scopeDescriptor}) ->
     scopes = scopeDescriptor.getScopesArray()
     return hasScope(scopes, 'support.class.ruby') || hasScope(scopes, 'variable.other.constant.ruby')
+
+  isCompletingInheritedClass: ({scopeDescriptor}) ->
+    scopes = scopeDescriptor.getScopesArray()
+    return hasScope(scopes, 'entity.other.inherited-class.ruby')
 
   getCompletions: ({prefix}) ->
     completions = []
@@ -47,11 +61,23 @@ module.exports =
       completions.push(@buildMethodCompletion(prefix, method, args))
     completions
 
+  getClassCompletions: ({prefix}) ->
+    completions = []
+    for klass in @classes when stringContains(prefix, klass)
+      completions.push(@buildClassCompletion(prefix, klass))
+    completions
+
   getConstantCompletions: ({prefix}) ->
     completions = []
     for constant, type of @constants when stringContains(prefix, constant)
       completions.push(@buildConstantCompletion(prefix, constant))
     completions
+
+  buildClassCompletion: (prefix, klass) ->
+    type: 'class'
+    text: "#{klass.titleize()}"
+    displayText: klass.titleize()
+    replacementPrefix: prefix
 
   buildMethodCompletion: (prefix, method, args) ->
     temp = method.split(':')
@@ -71,7 +97,7 @@ module.exports =
 
   buildConstantCompletion: (prefix, constant) ->
     type: 'constant'
-    text: "#{constant}"
+    text: "#{constant.titleize()}"
     displayText: constant
     replacementPrefix: prefix
 
@@ -87,4 +113,6 @@ hasScope = (scopesArray, scope) ->
 stringContains = (prefix, text) ->
   text.replace(/\W/g, '').toLowerCase().indexOf(prefix.toLowerCase()) == 0
 
+String.prototype.titleize =  ->
+  this.charAt(0).toUpperCase() + this.slice(1)
   # scopesArray.indexOf(scope) isnt -1
