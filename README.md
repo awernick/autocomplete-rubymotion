@@ -4,7 +4,7 @@
 ### To-Do
 - [X] Method autocomplete
 - [X] Constant autocomplete
-- [ ] Class autocomplete
+- [X] Class autocomplete
 - [ ] Integration with build system
 - [X] Version-specific snippet generation from source
 - [ ] Proper RubyMotion project detection.
