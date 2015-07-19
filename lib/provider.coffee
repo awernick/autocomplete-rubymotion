@@ -11,18 +11,17 @@ module.exports =
     if isCompletingInheritedClass = @isCompletingInheritedClass({scopeDescriptor})
       completions = completions.concat(@getClassCompletions({prefix}))
 
-    else if isCompletingConstantOrClass = @isCompletingConstantOrClass({scopeDescriptor})
+    else if isCompletingConstant = @isCompletingConstant({scopeDescriptor})
       completions = completions.concat(@getClassCompletions({prefix}))
       completions = completions.concat(@getConstantCompletions({prefix}))
+      completions = completions.concat(@getFunctionCompletions({prefix}))
 
-    else if isCompletingMethod = @isCompletingMethod({scopeDescriptor})
-        completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
+    # else if isCompletingMethod = @isCompletingMethod({scopeDescriptor})
+    #     completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
 
     else
-      # Add methods, functions, and classes
+      # Add methods
       completions = completions.concat(@getMethodCompletions({scopeDescriptor, prefix}))
-      completions = completions.concat(@getFunctionCompletions({scopeDescriptor, prefix}))
-      # completions = completions.concat(@getClassCompletions({scopeDescriptor, prefix}))
 
     completions.sort()
     # @getConstructCompletions(request)
@@ -41,7 +40,7 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
     return hasScope(scopes, 'meta.function.method')
 
-  isCompletingConstantOrClass: ({scopeDescriptor}) ->
+  isCompletingConstant: ({scopeDescriptor}) ->
     scopes = scopeDescriptor.getScopesArray()
     return hasScope(scopes, 'support.class.ruby') || hasScope(scopes, 'variable.other.constant.ruby')
 
@@ -49,11 +48,11 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
     return hasScope(scopes, 'entity.other.inherited-class.ruby')
 
-  getCompletions: ({prefix}) ->
-    completions = []
-    for constant, type of @constants when stringContains(prefix, constant)
-      completions.push(@buildConstantCompletion(prefix, constant))
-    completions
+  # getCompletions: ({prefix}) ->
+  #   completions = []
+  #   for constant, type of @constants when stringContains(prefix, constant)
+  #     completions.push(@buildConstantCompletion(prefix, constant))
+  #   completions
 
   getMethodCompletions: ({scopeDescriptor, prefix}) ->
     completions = []
@@ -72,6 +71,25 @@ module.exports =
     for constant, type of @constants when stringContains(prefix, constant)
       completions.push(@buildConstantCompletion(prefix, constant))
     completions
+
+  getFunctionCompletions: ({prefix}) ->
+    completions = []
+    for func, {args} of @functions when stringContains(prefix, func)
+      completions.push(@buildFunctionCompletion(prefix, func, args))
+    completions
+
+  buildFunctionCompletion: (prefix, func, args) ->
+    snippet = "#{func.titleize}("
+    i = 0
+    for key of args
+      snippet += "${#{i + 1}:#{key}}"
+      snippet += if i+1 == Object.keys(args).length then ')' else ', '
+      i++
+
+    type: 'function'
+    snippet: snippet
+    displayText: func
+    replacementPrefix: prefix
 
   buildClassCompletion: (prefix, klass) ->
     type: 'class'
