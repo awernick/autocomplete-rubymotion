@@ -2,12 +2,12 @@ fs = require 'fs'
 path = require 'path'
 
 module.exports =
-  selector: '.source.ruby'
-  disableForSelector: '.source.ruby .comment'
+  selector: '.source.rubymotion'
+  disableForSelector: '.source.rubymotion .comment'
 
   getSuggestions: ({editor, bufferPosition, scopeDescriptor, prefix}) ->
     completions = []
-
+    
     if isCompletingInheritedClass = @isCompletingInheritedClass({scopeDescriptor})
       completions = completions.concat(@getClassCompletions({prefix}))
 
