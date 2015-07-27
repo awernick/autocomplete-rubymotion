@@ -1,7 +1,7 @@
 {
   "name": "autocomplete-motion",
   "main": "./lib/autocomplete-motion",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Autocomplete+ provider for RubyMotion",
   "keywords": [],
   "repository": "https://github.com/awernick/autocomplete-rubymotion",
